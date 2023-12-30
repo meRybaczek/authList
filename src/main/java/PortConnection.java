@@ -49,7 +49,6 @@ public class PortConnection {
     private int getBytesPerPacket() throws InterruptedException {
         Thread.sleep(3000);
         return comPort.bytesAvailable();
-
     }
 
     //dla testow
