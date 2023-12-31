@@ -2,24 +2,27 @@ package project;
 
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import project.PoC.AuthorizingServicePoC;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
+@Controller //I think we can treat it as controller - tbd
 public class PortConnection {
     private static final int PORT_NO = 1;
     private final StringBuilder measurement;
     private final SerialPort comPort;
-    private final AuthorizingServicePoC authorizingServicePoC = new AuthorizingServicePoC();
+    private final AuthorizingServicePoC authorizingServicePoC;
 
-    public PortConnection(StringBuilder measurements, SerialPort inputPort) {
+    public PortConnection(StringBuilder measurements, SerialPort inputPort, AuthorizingServicePoC authorizingServicePoC) {
         this.comPort = inputPort;
         this.measurement = measurements;
+        this.authorizingServicePoC = authorizingServicePoC;
     }
 
-    public StringBuilder getMeasurement() {
+    public StringBuilder getAuthorization() {
         InputStream in = comPort.getInputStream();
 
         try {
@@ -43,6 +46,7 @@ public class PortConnection {
         }
 
 
+
         return new StringBuilder(authorizingServicePoC.authorize(measurement.toString())); // pokemon, zmienie w next commicie kiedyśtam xd
     }
 
@@ -58,9 +62,9 @@ public class PortConnection {
             StringBuilder stringBuilder = new StringBuilder();
             SerialPort comPort = SerialPort.getCommPorts()[PORT_NO];
             comPort.openPort();
-            PortConnection connection = new PortConnection(stringBuilder, comPort);
-            StringBuilder measurement = connection.getMeasurement();
-            System.out.println(measurement);
+//            PortConnection connection = new PortConnection(stringBuilder, comPort, new AuthorizingServicePoC(n));
+//            StringBuilder measurement = connection.getAuthorization();
+//            System.out.println(measurement);
             comPort.closePort();
         }
 
