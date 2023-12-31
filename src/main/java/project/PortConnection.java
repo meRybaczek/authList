@@ -2,6 +2,7 @@ package project;
 
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.extern.slf4j.Slf4j;
+import project.PoC.AuthorizingServicePoC;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ public class PortConnection {
     private static final int PORT_NO = 1;
     private final StringBuilder measurement;
     private final SerialPort comPort;
+    private final AuthorizingServicePoC authorizingServicePoC = new AuthorizingServicePoC();
 
     public PortConnection(StringBuilder measurements, SerialPort inputPort) {
         this.comPort = inputPort;
@@ -40,7 +42,8 @@ public class PortConnection {
             comPort.flushIOBuffers();
         }
 
-        return measurement;
+
+        return new StringBuilder(authorizingServicePoC.authorize(measurement.toString())); // pokemon, zmienie w next commicie kiedyśtam xd
     }
 
     private int getBytesPerPacket() throws InterruptedException {
