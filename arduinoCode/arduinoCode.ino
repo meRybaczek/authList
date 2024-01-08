@@ -37,8 +37,8 @@ void setup() {
   digitalWrite(S1, LOW);
 
   //LED
-  pinMode(LED_RED, OUTPUT);
-  pinMode(GREEN_RED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
 
   //sound sensor
    pinMode(trigPin, OUTPUT);
@@ -85,15 +85,12 @@ void initialState(){
 }
 
 
-  String finalTask(String message){
+  void finalTask(String message){
     if(message != "Unauthorized"){
-      ledsState(RED_LED,ON);
-      ledsState(GREEN_LED,OFF);
-    } else {
       ledsState(RED_LED,OFF);
       ledsState(GREEN_LED,ON);
     }
-
+    lcdScreenInfo(message);
   }
 
   void ledsState(ledName, int state){
@@ -140,7 +137,7 @@ void initialState(){
   }
 
   int countDistanceFromCardToSensor(){
-    int SOUND_SPEED = 58;
+    int SENSOR_FACTOR = 58;
     digitalWrite(trigPin, LOW);
     delayMicroseconds(2);
     digitalWrite(trigPin, HIGH);
@@ -148,7 +145,7 @@ void initialState(){
     digitalWrite(trigPin, LOW);
 
     long time = pulseIn(echoPin, HIGH);
-    long distance = time/SOUND_SPEED;
+    long distance = time/SENSOR_FACTOR;
 
     return distance;
   }
@@ -168,6 +165,14 @@ void initialState(){
   void sendDataToServer(String upload){
     Serial.begin(upload);
 
+  }
+  String receiveStringFromServer(){
+    String receivedInfo = "No message received from server";
+
+    if(Serial.available() > 0){
+        receivedInfo = Serial.readStringUntil('\n');
+    }
+        return receivedInfo;
   }
 
 }
