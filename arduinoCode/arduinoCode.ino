@@ -13,10 +13,12 @@ int OFF = 0;
 //buzzer
 #define BUZZER A2
 
-//LCD instance
+//LCD 1602 instance
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
-//RFID instance
+//RFID RC522 instance
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+String const NO_MESSAGE_RECEIVED = "No message received from server";
 
 
 void setup() {
@@ -40,9 +42,8 @@ void setup() {
 }
 
 void loop() {
-
+  
   if(tagDetected()){
-
     beeperOn(1000);
     lcdScreenInfo("Authorizing...");
     delay(1000);
@@ -69,7 +70,7 @@ void initialState(){
 
 
   void finalTask(String message){
-    if(message != "Unauthorized"){
+    if(message != "Unauthorized" && message != NO_MESSAGE_RECEIVED){
       ledsState(RED_LED,OFF);
       ledsState(GREEN_LED,ON);
     }
@@ -107,13 +108,10 @@ void initialState(){
 
 
   String receiveStringFromServer(){
-
-    String receivedInfo = "No message received from server";
     delay(2000); // time required to retrieve data from server if exist
     if(Serial.available() > 0){
-        receivedInfo = Serial.readStringUntil('\n');
+        return Serial.readStringUntil('\n');
     }
-        return receivedInfo;
+    return NO_MESSAGE_RECEIVED;
+        
   }
-
-
