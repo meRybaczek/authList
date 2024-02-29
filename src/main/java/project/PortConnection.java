@@ -55,6 +55,26 @@ public class PortConnection {
         return comPort.bytesAvailable();
     }
 
+    public void sendData(String message){
+
+        try {
+            if (comPort.openPort()) {
+                comPort.setBaudRate(9600);
+                comPort.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
+
+                Thread.sleep(2000); //czas potrzebny na stabilizacje połączenia
+                byte[] bytes = message.getBytes();
+                comPort.getOutputStream().write(bytes);
+
+//                comPort.closePort();
+            }
+        } catch(InterruptedException | IOException exception){
+            log.error("Something happened during reading buffer, message: {}", exception.getMessage(), exception);
+        } finally {
+            comPort.flushIOBuffers();
+        }
+    }
+
     //dla testow
     public static void main(String[] args) {
 

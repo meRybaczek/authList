@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class AuthorizingServicePoC {
-    private static final double MAXIMUM_THRESHOLD = 0.05;
+    private static final double MAXIMUM_THRESHOLD = 0.05;//final factor result will be calculated after the assembly of the hardware
 
     private final UserRepositoryPoC userRepositoryPoC;
     public String authorize(String colorString) {
@@ -35,18 +35,11 @@ public class AuthorizingServicePoC {
     }
 
     private boolean isColorSimilar(Color userColor, Color color) {
-        double distance = compareColors(userColor, color);
+        double distance = Math.sqrt(Math.pow(userColor.getRed() - color.getRed(), 2) +
+                Math.pow(userColor.getGreen() - color.getGreen(), 2) +
+                Math.pow(userColor.getBlue() - color.getBlue(), 2));
 
         return distance <= MAXIMUM_THRESHOLD;
-    }
-
-    private double compareColors(Color userColor, Color color) {
-//        convert to HSB
-        float[] hsb1 = Color.RGBtoHSB(userColor.getRed(), userColor.getGreen(), userColor.getBlue(), null);
-        float[] hsb2 = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-
-        // Calculate the Euclidean distance between the color points in the HSB color space
-        return Math.sqrt(Math.pow(hsb1[0] - hsb2[0], 2) + Math.pow(hsb1[1] - hsb2[1], 2) + Math.pow(hsb1[2] - hsb2[2], 2));
     }
 
     private static Color parse(String input)
